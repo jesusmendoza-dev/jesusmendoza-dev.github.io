@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bots en Python que reemplazan una plataforma RPA comercial - Jesús Mendoza</title>
+<meta name="description" content="Cinco bots en Python desarrollados desde cero que trabajan sobre JD Edwards E1, portales de ARCA y AGIP, SharePoint y la plataforma de RR. HH., y reemplazan una plataforma RPA comercial y su soporte externo con un ahorro de USD 46.000 al año, sin IA en los cálculos.">
+<meta name="color-scheme" content="light dark">
+<link rel="canonical" href="https://jesusmendoza-dev.github.io/casos/bots-python/">
+<link rel="alternate" hreflang="es" href="https://jesusmendoza-dev.github.io/casos/bots-python/">
+<link rel="alternate" hreflang="en" href="https://jesusmendoza-dev.github.io/en/cases/bots-python/">
+<link rel="alternate" hreflang="x-default" href="https://jesusmendoza-dev.github.io/casos/bots-python/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Jesús Mendoza">
+<meta property="og:title" content="Bots en Python que reemplazan una plataforma RPA comercial - Jesús Mendoza">
+<meta property="og:description" content="Cinco bots en Python desarrollados desde cero que trabajan sobre JD Edwards E1, portales de ARCA y AGIP, SharePoint y la plataforma de RR. HH., y reemplazan una plataforma RPA comercial y su soporte externo con un ahorro de USD 46.000 al año, sin IA en los cálculos.">
+<meta property="og:url" content="https://jesusmendoza-dev.github.io/casos/bots-python/">
+<meta property="og:locale" content="es_AR">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="/assets/style.css">
+</head>
+<body>
+<a class="skip" href="#main">Saltar al contenido</a>
+<header class="site-header">
+<div class="wrap bar">
+<a class="brand" href="/">Jesús Mendoza</a>
+<nav aria-label="Principal" class="nav"><a href="/#que-hago">Qué hago</a><a href="/#casos">Casos</a><a href="/#experiencia">Experiencia</a><a href="/#aptitudes">Aptitudes</a><a href="/#formacion">Formación</a><a href="/#contacto">Contacto</a></nav>
+<a class="lang" href="/en/cases/bots-python/" hreflang="en" lang="en" aria-label="English">EN</a>
+</div>
+</header>
+<main id="main">
+<article class="wrap case"><p class="back"><a href="/#casos">← Volver a casos</a></p><h1>Bots en Python que reemplazan una plataforma RPA comercial</h1><p class="stack-label">Stack</p><ul class="chips"><li>Python</li><li>Playwright</li><li>openpyxl</li><li>python-docx</li><li>pdfplumber</li><li>pypdf</li><li>LibreOffice headless</li><li>Microsoft Graph</li><li>Azure Key Vault</li><li>Docker</li><li>Kubernetes (k3s)</li><li>Argo Workflows</li><li>JD Edwards EnterpriseOne</li></ul><div class="prose"><h2>Contexto</h2>
+<p>La empresa pagaba la licencia de una plataforma RPA comercial, más su soporte externo, para cinco procesos de Tesorería, Impuestos, RR.HH. y Salud Ocupacional. El objetivo: dejar de depender de esa licencia y de ese soporte con bots propios que entreguen exactamente el mismo resultado.</p>
+<h2>Solución</h2>
+<p>Desarrollé desde cero cinco bots en Python, uno por proceso, con utilidades comunes y un mismo punto de entrada:</p>
+<ul><li>Carga de recibos de Tesorería en JD Edwards E1 a partir de Excel.</li><li>Certificados laborales generados desde el portal de la autoridad fiscal.</li><li>Actualización de 8 padrones impositivos en el ERP.</li><li>Generación de aptos médicos en PDF por empleado y cliente.</li><li>Distribución de recibos de sueldo desde el sistema de nómina a la plataforma de RR.HH. (vía API).</li></ul>
+<p>La interfaz web del ERP y de los portales se automatiza con Playwright. Los documentos se generan con python-docx y LibreOffice, y los archivos se leen y escriben en SharePoint vía Microsoft Graph.</p>
+<p><strong>Sin IA en los cálculos, por decisión:</strong> estos procesos manejan importes, datos fiscales y datos personales. Ahí se necesita determinismo.</p>
+<h2>Arquitectura</h2>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  CRON[Argo CronWorkflows · k3s] --&gt; POD[Contenedor del bot]
+  SP[(SharePoint)] --&gt; POD
+  POD --&gt;|Playwright| ERP[JD Edwards E1]
+  POD --&gt;|Playwright / HTTP| AF[Portales fiscales]
+  POD --&gt;|API| HR[Plataforma de RR.HH.]
+  KV[(Azure Key Vault)] --&gt; POD
+  POD --&gt; SP
+  POD -.-&gt;|si falla| AV[Aviso por mail + SharePoint]</pre></figure>
+<h2>Decisiones de diseño</h2>
+<ul><li><strong>Paridad antes que mejora:</strong> cada bot se valida contra los resultados del sistema anterior antes de pasar a producción.</li><li><strong>Seguro por defecto:</strong> ejecución en modo prueba salvo bandera explícita; ambiente (TEST/PROD) obligatorio; un solo proceso por bot a la vez.</li><li><strong>Tolerancia a fallos:</strong> un error en un ítem no corta la corrida; las corridas son idempotentes y notifican si fallan, con los datos enmascarados.</li><li><strong>Mínimo privilegio:</strong> identidad separada por bot, certificados en lugar de secretos en texto y credenciales en Key Vault.</li><li><strong>Reproducibilidad y trazabilidad:</strong> imagen con versiones fijadas y registro del commit desplegado en cada corrida.</li><li><strong>Orquestación (DevOps de apoyo):</strong> k3s + Argo Workflows con mutex, timeouts, alertas al fallar y retención de logs de 90 días.</li></ul>
+<h2>Resultados</h2>
+<ul><li>Ahorro de USD 46.000 al año: es el costo real de la licencia y el soporte externo de la plataforma reemplazada, según el contrato.</li><li>5 bots desarrollados desde cero para 4 áreas: 3 en producción y 2 en etapa de pruebas.</li><li>Unas 110-135 horas de trabajo manual evitadas por mes (estimación).</li><li>670 documentos generados y publicados en 39 minutos, sin fallos.</li><li>Certificados: 244/244 y 237/237 períodos validados sin diferencias.</li><li>Tesorería: 15 recibos comparados contra producción; 13 idénticos y 2 donde el bot detectó un error del proceso anterior.</li><li>Padrones de hasta 1,6 millones de registros procesados.</li><li>Más de 1.500 tests automatizados.</li></ul></div></article>
+</main>
+<footer class="site-footer"><div class="wrap">&copy; Jesús Mendoza · Todos los derechos reservados.</div></footer>
+<script type="module">
+import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.4.1/dist/mermaid.esm.min.mjs";
+const dark = matchMedia("(prefers-color-scheme: dark)").matches;
+mermaid.initialize({ startOnLoad: false, theme: dark ? "dark" : "default" });
+await mermaid.run({ querySelector: "pre.mermaid" });
+</script>
+</body>
+</html>

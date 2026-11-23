@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Auditar una plataforma sin documentación con un MCP seguro - Jesús Mendoza</title>
+<meta name="description" content="Servidor MCP con 15 herramientas de solo lectura para auditar una plataforma de terceros sin documentación; el modelo ve la estructura, nunca los secretos.">
+<meta name="color-scheme" content="light dark">
+<link rel="canonical" href="https://jesusmendoza-dev.github.io/casos/mcp-auditoria/">
+<link rel="alternate" hreflang="es" href="https://jesusmendoza-dev.github.io/casos/mcp-auditoria/">
+<link rel="alternate" hreflang="en" href="https://jesusmendoza-dev.github.io/en/cases/mcp-auditoria/">
+<link rel="alternate" hreflang="x-default" href="https://jesusmendoza-dev.github.io/casos/mcp-auditoria/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Jesús Mendoza">
+<meta property="og:title" content="Auditar una plataforma sin documentación con un MCP seguro - Jesús Mendoza">
+<meta property="og:description" content="Servidor MCP con 15 herramientas de solo lectura para auditar una plataforma de terceros sin documentación; el modelo ve la estructura, nunca los secretos.">
+<meta property="og:url" content="https://jesusmendoza-dev.github.io/casos/mcp-auditoria/">
+<meta property="og:locale" content="es_AR">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="/assets/style.css">
+</head>
+<body>
+<a class="skip" href="#main">Saltar al contenido</a>
+<header class="site-header">
+<div class="wrap bar">
+<a class="brand" href="/">Jesús Mendoza</a>
+<nav aria-label="Principal" class="nav"><a href="/#que-hago">Qué hago</a><a href="/#casos">Casos</a><a href="/#experiencia">Experiencia</a><a href="/#aptitudes">Aptitudes</a><a href="/#formacion">Formación</a><a href="/#contacto">Contacto</a></nav>
+<a class="lang" href="/en/cases/mcp-auditoria/" hreflang="en" lang="en" aria-label="English">EN</a>
+</div>
+</header>
+<main id="main">
+<article class="wrap case"><p class="back"><a href="/#casos">← Volver a casos</a></p><h1>Auditar una plataforma sin documentación con un MCP seguro</h1><p class="stack-label">Stack</p><ul class="chips"><li>Python</li><li>FastMCP</li><li>SQL Server 2022</li><li>T-SQL</li><li>Windows Server</li><li>IIS</li><li>PowerShell</li><li>WinRM</li><li>Agentes de IA</li></ul><div class="prose"><h2>Contexto</h2>
+<p>La empresa depende de una plataforma de gestión de un proveedor externo (.NET sobre IIS y SQL Server), sin documentación ni acceso al código. Hacía falta entenderla y auditarla sin modificar nada.</p>
+<h2>Solución</h2>
+<p>Un servidor MCP en Python (FastMCP) con 15 herramientas de solo lectura que un agente de IA usa para relevar servidores, servicios, sitios IIS, parches, firewall, permisos, grupos, configuración y la estructura completa de la base de datos.</p>
+<p>La regla central: <strong>el modelo ve estructura, nunca valores sensibles</strong>. Las cadenas de conexión se informan solo como &quot;presente&quot;, las variables de entorno por nombre, los archivos por metadatos y los logins sin hashes.</p>
+<h2>Arquitectura</h2>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  A[Analista] --&gt; CC[Agente de IA · cliente MCP]
+  CC --&gt;|stdio| MCP[MCP de auditoría · Python FastMCP]
+  MCP --&gt; V[Validación de parámetros y rutas]
+  V --&gt;|WinRM| WEB[Servidor web · IIS]
+  V --&gt;|WinRM + T-SQL fijo| SQL[(SQL Server 2022)]
+  MCP -.-&gt; LOG[(Log de auditoría)]
+  CC --&gt; H[Hallazgos y documentación]</pre></figure>
+<h2>Decisiones de diseño</h2>
+<ul><li><strong>Consultas T-SQL fijas</strong>, validadas al iniciar: solo vistas de sistema, nunca tablas de negocio.</li><li><strong>Validación de entradas:</strong> nombres de base contra el catálogo real; rutas solo dentro de raíces permitidas.</li><li><strong>Límites:</strong> máximo de filas, paginación, concurrencia acotada y timeouts por herramienta.</li><li><strong>Secretos filtrados del lado del servidor</strong>, con tests que verifican que nunca aparezcan en la salida.</li><li><strong>Confirmación humana</strong> para cualquier comando remoto fuera del MCP.</li></ul>
+<h2>Resultados</h2>
+<ul><li>4.662 tablas, 148.213 columnas, 12.808 claves foráneas y ~22,8 millones de filas mapeadas.</li><li>225 tablas sin clave primaria y 95 tablas con columnas potencialmente sensibles identificadas.</li><li>24 hallazgos de seguridad documentados (servidores sin parches, firewall deshabilitado, credenciales en archivos de configuración).</li><li>Esquema completo relevado en ~2 minutos.</li><li>Suite de 848 tests sobre el servidor MCP.</li></ul></div></article>
+</main>
+<footer class="site-footer"><div class="wrap">&copy; Jesús Mendoza · Todos los derechos reservados.</div></footer>
+<script type="module">
+import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.4.1/dist/mermaid.esm.min.mjs";
+const dark = matchMedia("(prefers-color-scheme: dark)").matches;
+mermaid.initialize({ startOnLoad: false, theme: dark ? "dark" : "default" });
+await mermaid.run({ querySelector: "pre.mermaid" });
+</script>
+</body>
+</html>

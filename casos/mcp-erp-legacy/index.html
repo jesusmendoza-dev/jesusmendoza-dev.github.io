@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Recuperar el conocimiento de un ERP legacy con servidores MCP - Jesús Mendoza</title>
+<meta name="description" content="Dos servidores MCP en Python dan a un agente de IA acceso de solo lectura a JD Edwards E1 y Oracle para recuperar el conocimiento que se fue con el responsable de aplicaciones.">
+<meta name="color-scheme" content="light dark">
+<link rel="canonical" href="https://jesusmendoza-dev.github.io/casos/mcp-erp-legacy/">
+<link rel="alternate" hreflang="es" href="https://jesusmendoza-dev.github.io/casos/mcp-erp-legacy/">
+<link rel="alternate" hreflang="en" href="https://jesusmendoza-dev.github.io/en/cases/mcp-erp-legacy/">
+<link rel="alternate" hreflang="x-default" href="https://jesusmendoza-dev.github.io/casos/mcp-erp-legacy/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Jesús Mendoza">
+<meta property="og:title" content="Recuperar el conocimiento de un ERP legacy con servidores MCP - Jesús Mendoza">
+<meta property="og:description" content="Dos servidores MCP en Python dan a un agente de IA acceso de solo lectura a JD Edwards E1 y Oracle para recuperar el conocimiento que se fue con el responsable de aplicaciones.">
+<meta property="og:url" content="https://jesusmendoza-dev.github.io/casos/mcp-erp-legacy/">
+<meta property="og:locale" content="es_AR">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="/assets/style.css">
+</head>
+<body>
+<a class="skip" href="#main">Saltar al contenido</a>
+<header class="site-header">
+<div class="wrap bar">
+<a class="brand" href="/">Jesús Mendoza</a>
+<nav aria-label="Principal" class="nav"><a href="/#que-hago">Qué hago</a><a href="/#casos">Casos</a><a href="/#experiencia">Experiencia</a><a href="/#aptitudes">Aptitudes</a><a href="/#formacion">Formación</a><a href="/#contacto">Contacto</a></nav>
+<a class="lang" href="/en/cases/mcp-erp-legacy/" hreflang="en" lang="en" aria-label="English">EN</a>
+</div>
+</header>
+<main id="main">
+<article class="wrap case"><p class="back"><a href="/#casos">← Volver a casos</a></p><h1>Recuperar el conocimiento de un ERP legacy con servidores MCP</h1><p class="stack-label">Stack</p><ul class="chips"><li>Python</li><li>MCP (SDK oficial)</li><li>python-oracledb</li><li>Oracle 19c</li><li>JD Edwards EnterpriseOne 9.2</li><li>JD Edwards AIS / Orchestrator</li><li>Agentes de IA</li></ul><div class="prose"><h2>Contexto</h2>
+<p>Una empresa de servicios industriales opera su negocio sobre JD Edwards EnterpriseOne 9.2 con base Oracle 19c. El responsable de aplicaciones se fue y el conocimiento del sistema se fue con él: orquestaciones, seguridad, macros que escriben en producción y tareas programadas, todo sin documentar. El objetivo: saber qué depende de qué, cerrar riesgos y poder operar.</p>
+<h2>Solución</h2>
+<p>Construí dos servidores MCP en Python que le dan a un agente de IA (cliente MCP) acceso <strong>de solo lectura</strong> al ERP:</p>
+<ul><li><strong>Servidor de base de datos</strong> (Oracle): <code>query</code> (solo <code>SELECT</code>/<code>WITH</code>, resultado tabular con límite de filas), <code>describe_table</code> (columnas y comentarios) y <code>udo_xml</code> (definiciones de orquestaciones, reglas, notificaciones y schedules del Orchestrator, con secretos ocultos).</li><li><strong>Servidor AIS</strong> (API REST de JD Edwards): configuración, orquestaciones disponibles, estado del programador y lectura de tablas con límite de filas. Lista cerrada de endpoints; no puede ejecutar ni detener nada.</li></ul>
+<p>El agente investiga y redacta; yo valido, decido y envío. Un subagente lector consulta la documentación ya generada para no repetir trabajo.</p>
+<h2>Arquitectura</h2>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  A[Analista] --&gt; CC[Agente de IA · cliente MCP]
+  CC --&gt;|stdio| DB[MCP base de datos · Python]
+  CC --&gt;|stdio| AIS[MCP AIS · Python]
+  CC -.-&gt; SUB[Subagente lector de docs]
+  DB --&gt;|SELECT en transacción READ ONLY + ROLLBACK| ORA[(Oracle 19c · JD Edwards E1)]
+  AIS --&gt;|endpoints permitidos| ORCH[JD Edwards AIS / Orchestrator]
+  DB -.-&gt; LOG[(Log de auditoría)]
+  AIS -.-&gt; LOG
+  CC --&gt; DOC[Documentación, consultas reutilizables, entregables]</pre></figure>
+<h2>Decisiones de diseño</h2>
+<ul><li><strong>Solo lectura en tres capas:</strong> validación de la sentencia (una sola, solo lectura, sin <code>FOR UPDATE</code> ni paquetes peligrosos), transacción <code>READ ONLY</code> con <code>ROLLBACK</code> y cuenta dedicada para el agente.</li><li><strong>Límites:</strong> máximo de filas por consulta y timeout de 120 s.</li><li><strong>Auditoría:</strong> cada consulta queda registrada (sentencia, filas, duración) sin guardar los datos.</li><li><strong>Secretos:</strong> credenciales en el gestor de credenciales del sistema operativo; contraseñas y tokens se ocultan antes de llegar al modelo.</li><li><strong>Humano en el circuito:</strong> el agente nunca escribe en producción.</li></ul>
+<h2>Resultados</h2>
+<ul><li>14 de 14 orquestaciones productivas documentadas, incluido el circuito crítico de facturas.</li><li>692 roles catalogados y 918 usuarios habilitados auditados; 885 usuarios detectados con un conflicto de roles en un programa de compras.</li><li>355 usuarios con visibilidad sobre todas las unidades de negocio identificados como riesgo.</li><li>3.365 archivos de Excel/VBA analizados y 89 macros inventariadas, 20 de ellas escriben en producción.</li><li>13 consultas SQL reutilizables y entregables formales para el área de Seguridad.</li><li>Relevamiento principal en tres semanas; 52 commits en dos meses.</li></ul>
+<h2>Próximos pasos</h2>
+<p>Tests automáticos de las guardas de solo lectura, permisos de base más acotados y versión open source genérica.</p></div></article>
+</main>
+<footer class="site-footer"><div class="wrap">&copy; Jesús Mendoza · Todos los derechos reservados.</div></footer>
+<script type="module">
+import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.4.1/dist/mermaid.esm.min.mjs";
+const dark = matchMedia("(prefers-color-scheme: dark)").matches;
+mermaid.initialize({ startOnLoad: false, theme: dark ? "dark" : "default" });
+await mermaid.run({ querySelector: "pre.mermaid" });
+</script>
+</body>
+</html>

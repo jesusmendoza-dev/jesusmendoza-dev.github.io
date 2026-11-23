@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI-generated Teams meeting minutes - Jesús Mendoza</title>
+<meta name="description" content="An event-driven flow that reads each Teams meeting transcript, sends it to the Anthropic API and delivers the organizer a minute in the structure the business asked for.">
+<meta name="color-scheme" content="light dark">
+<link rel="canonical" href="https://jesusmendoza-dev.github.io/en/cases/minutas/">
+<link rel="alternate" hreflang="es" href="https://jesusmendoza-dev.github.io/casos/minutas/">
+<link rel="alternate" hreflang="en" href="https://jesusmendoza-dev.github.io/en/cases/minutas/">
+<link rel="alternate" hreflang="x-default" href="https://jesusmendoza-dev.github.io/casos/minutas/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Jesús Mendoza">
+<meta property="og:title" content="AI-generated Teams meeting minutes - Jesús Mendoza">
+<meta property="og:description" content="An event-driven flow that reads each Teams meeting transcript, sends it to the Anthropic API and delivers the organizer a minute in the structure the business asked for.">
+<meta property="og:url" content="https://jesusmendoza-dev.github.io/en/cases/minutas/">
+<meta property="og:locale" content="en_US">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="/assets/style.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-header">
+<div class="wrap bar">
+<a class="brand" href="/en/">Jesús Mendoza</a>
+<nav aria-label="Main" class="nav"><a href="/en/#que-hago">What I do</a><a href="/en/#casos">Cases</a><a href="/en/#experiencia">Experience</a><a href="/en/#aptitudes">Skills</a><a href="/en/#formacion">Education</a><a href="/en/#contacto">Contact</a></nav>
+<a class="lang" href="/casos/minutas/" hreflang="es" lang="es" aria-label="Español">ES</a>
+</div>
+</header>
+<main id="main">
+<article class="wrap case"><p class="back"><a href="/en/#casos">← Back to cases</a></p><h1>AI-generated Teams meeting minutes</h1><p class="stack-label">Stack</p><ul class="chips"><li>Microsoft Graph API</li><li>Power Automate</li><li>PowerShell</li><li>SharePoint</li><li>Entra ID</li><li>Claude (Anthropic API)</li></ul><div class="prose"><h2>Context</h2>
+<p>Teams meeting minutes were written by hand, and decisions and tasks went undocumented. The business asked for minutes in a defined structure: executive summary, decisions, tasks, next steps and risks.</p>
+<h2>Solution</h2>
+<p>An event-driven Power Automate flow. When a transcript is ready, Microsoft Graph notifies the flow, which reads the VTT transcript and the meeting metadata, sends them to the Anthropic API (Claude Haiku) with a prompt that produces the requested structure, emails the minute to the organizer and archives it as a per-user PDF in SharePoint with an index list. A tenant-wide Graph subscription is renewed every 12 h and a watchdog runs every 6 h.</p>
+<h2>Design decisions</h2>
+<p>Event-driven instead of 3-minute polling; idempotency by transcript id; output hardening (code-fence stripping, Outlook-safe HTML); model chosen for cost and speed; built-in platform options rejected on cost (per-user licensing: US$840-1,764/month for 84 users at list prices); PowerShell scripts that patch the live flow definitions with dry-run, JSON backup and verification; shadow mode with reconciliation before cutover; old flows stopped, not deleted, as rollback.</p>
+<h2>Results</h2>
+<p>Pilot approved, in production since July 2026 for 84 users · estimated AI cost of about USD 0.04 per meeting, against the USD 840-1,764 per month that Teams Premium or Copilot licenses would cost for the same 84 users (cost avoided, not a realized saving) · polling replaced by an event-driven model · one throttling episode resolved itself with no duplicates · documented postmortem of a platform incident.</p></div></article>
+</main>
+<footer class="site-footer"><div class="wrap">&copy; Jesús Mendoza · All rights reserved.</div></footer>
+</body>
+</html>

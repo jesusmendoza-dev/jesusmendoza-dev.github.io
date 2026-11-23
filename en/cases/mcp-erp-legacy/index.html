@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Recovering a legacy ERP&#x27;s knowledge with MCP servers - Jesús Mendoza</title>
+<meta name="description" content="Two Python MCP servers give an AI agent read-only access to JD Edwards E1 and Oracle to recover the knowledge that left with the applications lead.">
+<meta name="color-scheme" content="light dark">
+<link rel="canonical" href="https://jesusmendoza-dev.github.io/en/cases/mcp-erp-legacy/">
+<link rel="alternate" hreflang="es" href="https://jesusmendoza-dev.github.io/casos/mcp-erp-legacy/">
+<link rel="alternate" hreflang="en" href="https://jesusmendoza-dev.github.io/en/cases/mcp-erp-legacy/">
+<link rel="alternate" hreflang="x-default" href="https://jesusmendoza-dev.github.io/casos/mcp-erp-legacy/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Jesús Mendoza">
+<meta property="og:title" content="Recovering a legacy ERP&#x27;s knowledge with MCP servers - Jesús Mendoza">
+<meta property="og:description" content="Two Python MCP servers give an AI agent read-only access to JD Edwards E1 and Oracle to recover the knowledge that left with the applications lead.">
+<meta property="og:url" content="https://jesusmendoza-dev.github.io/en/cases/mcp-erp-legacy/">
+<meta property="og:locale" content="en_US">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="/assets/style.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-header">
+<div class="wrap bar">
+<a class="brand" href="/en/">Jesús Mendoza</a>
+<nav aria-label="Main" class="nav"><a href="/en/#que-hago">What I do</a><a href="/en/#casos">Cases</a><a href="/en/#experiencia">Experience</a><a href="/en/#aptitudes">Skills</a><a href="/en/#formacion">Education</a><a href="/en/#contacto">Contact</a></nav>
+<a class="lang" href="/casos/mcp-erp-legacy/" hreflang="es" lang="es" aria-label="Español">ES</a>
+</div>
+</header>
+<main id="main">
+<article class="wrap case"><p class="back"><a href="/en/#casos">← Back to cases</a></p><h1>Recovering a legacy ERP&#x27;s knowledge with MCP servers</h1><p class="stack-label">Stack</p><ul class="chips"><li>Python</li><li>MCP (official SDK)</li><li>python-oracledb</li><li>Oracle 19c</li><li>JD Edwards EnterpriseOne 9.2</li><li>JD Edwards AIS / Orchestrator</li><li>Agentes de IA</li></ul><div class="prose"><h2>Context</h2>
+<p>An industrial services company runs on JD Edwards EnterpriseOne 9.2 over Oracle 19c. When the applications lead left, the system&#x27;s knowledge left with him: orchestrations, security, macros writing to production and scheduled jobs, all undocumented. Goal: know what depends on what, close risks and be able to operate.</p>
+<h2>Solution</h2>
+<p>I built two Python MCP servers that give an AI agent (MCP client) <strong>read-only</strong> access to the ERP:</p>
+<ul><li><strong>Database server</strong> (Oracle): <code>query</code> (SELECT/WITH only, row-limited), <code>describe_table</code>, and <code>udo_xml</code> (Orchestrator definitions with secrets redacted).</li><li><strong>AIS server</strong> (JD Edwards REST API): configuration, available orchestrations, scheduler status and row-limited table reads. Closed endpoint allow-list; it cannot run or stop anything.</li></ul>
+<p>The agent investigates and drafts; I validate, decide and send.</p>
+<h2>Design decisions</h2>
+<p>Read-only in three layers (statement validation, READ ONLY transaction + rollback, dedicated account); row limits and timeouts; audit log without data; OS credential store and secret masking; human in the loop, no production writes.</p>
+<h2>Results</h2>
+<p>14/14 production orchestrations documented · 692 roles catalogued · 918 enabled users audited · 885 users with a role conflict found · 3,365 Excel/VBA files analyzed, 89 macros inventoried (20 write to production) · 13 reusable SQL checks · formal deliverables for Security · core discovery in three weeks.</p></div></article>
+</main>
+<footer class="site-footer"><div class="wrap">&copy; Jesús Mendoza · All rights reserved.</div></footer>
+</body>
+</html>

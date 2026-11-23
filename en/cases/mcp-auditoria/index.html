@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Auditing an undocumented platform with a secure MCP server - Jesús Mendoza</title>
+<meta name="description" content="An MCP server with 15 read-only tools to audit an undocumented third-party platform; the model sees structure, never secrets.">
+<meta name="color-scheme" content="light dark">
+<link rel="canonical" href="https://jesusmendoza-dev.github.io/en/cases/mcp-auditoria/">
+<link rel="alternate" hreflang="es" href="https://jesusmendoza-dev.github.io/casos/mcp-auditoria/">
+<link rel="alternate" hreflang="en" href="https://jesusmendoza-dev.github.io/en/cases/mcp-auditoria/">
+<link rel="alternate" hreflang="x-default" href="https://jesusmendoza-dev.github.io/casos/mcp-auditoria/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Jesús Mendoza">
+<meta property="og:title" content="Auditing an undocumented platform with a secure MCP server - Jesús Mendoza">
+<meta property="og:description" content="An MCP server with 15 read-only tools to audit an undocumented third-party platform; the model sees structure, never secrets.">
+<meta property="og:url" content="https://jesusmendoza-dev.github.io/en/cases/mcp-auditoria/">
+<meta property="og:locale" content="en_US">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="/assets/style.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-header">
+<div class="wrap bar">
+<a class="brand" href="/en/">Jesús Mendoza</a>
+<nav aria-label="Main" class="nav"><a href="/en/#que-hago">What I do</a><a href="/en/#casos">Cases</a><a href="/en/#experiencia">Experience</a><a href="/en/#aptitudes">Skills</a><a href="/en/#formacion">Education</a><a href="/en/#contacto">Contact</a></nav>
+<a class="lang" href="/casos/mcp-auditoria/" hreflang="es" lang="es" aria-label="Español">ES</a>
+</div>
+</header>
+<main id="main">
+<article class="wrap case"><p class="back"><a href="/en/#casos">← Back to cases</a></p><h1>Auditing an undocumented platform with a secure MCP server</h1><p class="stack-label">Stack</p><ul class="chips"><li>Python</li><li>FastMCP</li><li>SQL Server 2022</li><li>T-SQL</li><li>Windows Server</li><li>IIS</li><li>PowerShell</li><li>WinRM</li><li>Agentes de IA</li></ul><div class="prose"><h2>Context</h2>
+<p>The company depends on a third-party management platform (.NET on IIS and SQL Server) with no documentation and no source access. It had to be understood and audited without changing anything.</p>
+<h2>Solution</h2>
+<p>A Python MCP server (FastMCP) with 15 read-only tools an AI agent uses to survey servers, services, IIS sites, patches, firewall, permissions, groups, configuration and the full database structure. Core rule: <strong>the model sees structure, never sensitive values</strong>.</p>
+<h2>Design decisions</h2>
+<p>Fixed, startup-validated T-SQL over system views only; validated inputs and allow-listed paths; row limits, pagination, bounded concurrency and timeouts; server-side secret filtering with tests proving zero leakage; human confirmation for any remote command outside the MCP.</p>
+<h2>Results</h2>
+<p>4,662 tables / 148,213 columns / 12,808 foreign keys / ~22.8M rows mapped · 24 security findings documented · full schema surveyed in ~2 minutes · 848-test suite.</p></div></article>
+</main>
+<footer class="site-footer"><div class="wrap">&copy; Jesús Mendoza · All rights reserved.</div></footer>
+</body>
+</html>

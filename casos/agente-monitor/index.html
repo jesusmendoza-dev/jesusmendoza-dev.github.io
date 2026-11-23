@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Agente de IA que monitorea el mercado para cuatro áreas - Jesús Mendoza</title>
+<meta name="description" content="Agente en Python que cada mañana lee 29 fuentes y boletines oficiales, analiza cada noticia con un LLM y envía un informe distinto a cada una de cuatro áreas.">
+<meta name="color-scheme" content="light dark">
+<link rel="canonical" href="https://jesusmendoza-dev.github.io/casos/agente-monitor/">
+<link rel="alternate" hreflang="es" href="https://jesusmendoza-dev.github.io/casos/agente-monitor/">
+<link rel="alternate" hreflang="en" href="https://jesusmendoza-dev.github.io/en/cases/agente-monitor/">
+<link rel="alternate" hreflang="x-default" href="https://jesusmendoza-dev.github.io/casos/agente-monitor/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Jesús Mendoza">
+<meta property="og:title" content="Agente de IA que monitorea el mercado para cuatro áreas - Jesús Mendoza">
+<meta property="og:description" content="Agente en Python que cada mañana lee 29 fuentes y boletines oficiales, analiza cada noticia con un LLM y envía un informe distinto a cada una de cuatro áreas.">
+<meta property="og:url" content="https://jesusmendoza-dev.github.io/casos/agente-monitor/">
+<meta property="og:locale" content="es_AR">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="/assets/style.css">
+</head>
+<body>
+<a class="skip" href="#main">Saltar al contenido</a>
+<header class="site-header">
+<div class="wrap bar">
+<a class="brand" href="/">Jesús Mendoza</a>
+<nav aria-label="Principal" class="nav"><a href="/#que-hago">Qué hago</a><a href="/#casos">Casos</a><a href="/#experiencia">Experiencia</a><a href="/#aptitudes">Aptitudes</a><a href="/#formacion">Formación</a><a href="/#contacto">Contacto</a></nav>
+<a class="lang" href="/en/cases/agente-monitor/" hreflang="en" lang="en" aria-label="English">EN</a>
+</div>
+</header>
+<main id="main">
+<article class="wrap case"><p class="back"><a href="/#casos">← Volver a casos</a></p><h1>Agente de IA que monitorea el mercado para cuatro áreas</h1><p class="stack-label">Stack</p><ul class="chips"><li>Python</li><li>Claude (Anthropic API)</li><li>OpenRouter</li><li>Google Gemini</li><li>feedparser</li><li>BeautifulSoup</li><li>pdfplumber</li><li>SMTP Microsoft 365</li><li>Linux</li><li>systemd</li></ul><div class="prose"><h2>Contexto</h2>
+<p>En una empresa de la industria energética, cada gerente buscaba noticias a mano en más de diez fuentes: medios, sitios del sector y boletines oficiales en HTML y PDF.</p>
+<h2>Solución</h2>
+<p>Un agente en Python que corre todos los días a las 7:00. Recolecta las fuentes, filtra lo relevante, le pide a un LLM que evalúe cada noticia en función del negocio y envía un informe por mail distinto para cada área.</p>
+<ul><li><strong>Recolección:</strong> 29 fuentes RSS y boletines oficiales (HTML y PDF de cientos de páginas).</li><li><strong>Filtro determinístico:</strong> deduplicación por URL y por similitud de títulos, y reglas de palabras clave que asignan bloque y prioridad.</li><li><strong>Análisis con IA:</strong> por cada noticia el modelo devuelve JSON con relevancia, implicancia para el negocio, términos a resaltar y urgencia; además genera un resumen ejecutivo de hasta tres puntos.</li><li><strong>Entrega:</strong> HTML por perfil (Dirección, Comercial, Legales, Operaciones) enviado por SMTP de Microsoft 365.</li></ul>
+<h2>Arquitectura</h2>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  T[systemd timer 07:00] --&gt; M[Pipeline Python]
+  RSS[29 fuentes RSS] --&gt; S[Scraper]
+  BO[Boletines oficiales HTML/PDF] --&gt; S
+  S --&gt; F[Dedup + reglas de keywords]
+  F --&gt; A[Análisis LLM · JSON]
+  A --&gt; LLM[(Claude · OpenRouter · Gemini)]
+  A --&gt; E[Informe HTML por área]
+  E --&gt; SMTP[(Microsoft 365)]
+  M -.-&gt; C[(Log de costos por corrida)]</pre></figure>
+<h2>Decisiones de diseño</h2>
+<ul><li><strong>La IA analiza, las reglas clasifican:</strong> la prioridad base sale de reglas auditables; el LLM aporta el análisis de impacto.</li><li><strong>Proveedor intercambiable:</strong> el modelo se cambia por configuración (Anthropic, OpenRouter o Gemini).</li><li><strong>Robustez:</strong> cada fuente falla de forma aislada; si el LLM falla o devuelve JSON inválido, la noticia sigue con la prioridad de las reglas; reintentos ante errores transitorios.</li><li><strong>Seguro por defecto:</strong> modo vista previa por omisión, verificación de entorno (<code>--check</code>) y prueba sin gasto de API (<code>--test</code>).</li><li><strong>Contexto de negocio en el prompt</strong> con reglas de redacción: impacto condicional, sin recomendaciones de acción.</li><li><strong>Observabilidad:</strong> log diario, costo por corrida y copia de cada informe enviado.</li></ul>
+<h2>Resultados</h2>
+<ul><li>En producción, a diario, para 4 áreas y 42 destinatarios.</li><li>Más de 20 noticias analizadas por día.</li><li>Costo de IA estimado en ~USD 1,20 por mes.</li><li>Boletín oficial de 607 páginas procesado en 15 s.</li><li>Iteración con los usuarios: el área de Legales ya pidió ajustes de cobertura.</li></ul>
+<h2>Próximos pasos</h2>
+<p>Medir la calidad de la clasificación del LLM contra un conjunto etiquetado a mano y agregar espera progresiva en los reintentos.</p></div></article>
+</main>
+<footer class="site-footer"><div class="wrap">&copy; Jesús Mendoza · Todos los derechos reservados.</div></footer>
+<script type="module">
+import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.4.1/dist/mermaid.esm.min.mjs";
+const dark = matchMedia("(prefers-color-scheme: dark)").matches;
+mermaid.initialize({ startOnLoad: false, theme: dark ? "dark" : "default" });
+await mermaid.run({ querySelector: "pre.mermaid" });
+</script>
+</body>
+</html>

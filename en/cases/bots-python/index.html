@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Python bots that replace a commercial RPA platform - Jesús Mendoza</title>
+<meta name="description" content="Five Python bots built from scratch that work on JD Edwards E1, the ARCA and AGIP tax portals, SharePoint and the HR platform, replacing a commercial RPA platform and its external support, saving USD 46,000 a year with no AI in the calculations.">
+<meta name="color-scheme" content="light dark">
+<link rel="canonical" href="https://jesusmendoza-dev.github.io/en/cases/bots-python/">
+<link rel="alternate" hreflang="es" href="https://jesusmendoza-dev.github.io/casos/bots-python/">
+<link rel="alternate" hreflang="en" href="https://jesusmendoza-dev.github.io/en/cases/bots-python/">
+<link rel="alternate" hreflang="x-default" href="https://jesusmendoza-dev.github.io/casos/bots-python/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Jesús Mendoza">
+<meta property="og:title" content="Python bots that replace a commercial RPA platform - Jesús Mendoza">
+<meta property="og:description" content="Five Python bots built from scratch that work on JD Edwards E1, the ARCA and AGIP tax portals, SharePoint and the HR platform, replacing a commercial RPA platform and its external support, saving USD 46,000 a year with no AI in the calculations.">
+<meta property="og:url" content="https://jesusmendoza-dev.github.io/en/cases/bots-python/">
+<meta property="og:locale" content="en_US">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="/assets/style.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-header">
+<div class="wrap bar">
+<a class="brand" href="/en/">Jesús Mendoza</a>
+<nav aria-label="Main" class="nav"><a href="/en/#que-hago">What I do</a><a href="/en/#casos">Cases</a><a href="/en/#experiencia">Experience</a><a href="/en/#aptitudes">Skills</a><a href="/en/#formacion">Education</a><a href="/en/#contacto">Contact</a></nav>
+<a class="lang" href="/casos/bots-python/" hreflang="es" lang="es" aria-label="Español">ES</a>
+</div>
+</header>
+<main id="main">
+<article class="wrap case"><p class="back"><a href="/en/#casos">← Back to cases</a></p><h1>Python bots that replace a commercial RPA platform</h1><p class="stack-label">Stack</p><ul class="chips"><li>Python</li><li>Playwright</li><li>openpyxl</li><li>python-docx</li><li>pdfplumber</li><li>pypdf</li><li>LibreOffice headless</li><li>Microsoft Graph</li><li>Azure Key Vault</li><li>Docker</li><li>Kubernetes (k3s)</li><li>Argo Workflows</li><li>JD Edwards EnterpriseOne</li></ul><div class="prose"><h2>Context</h2>
+<p>The company paid for a commercial RPA platform license, plus its external support, to run five Treasury, Tax, HR and Occupational Health processes. Goal: stop depending on that license and support with in-house bots producing exactly the same output.</p>
+<h2>Solution</h2>
+<p>I built five Python bots from scratch (Playwright for the ERP and tax-portal web UIs, python-docx/LibreOffice for documents, Microsoft Graph for SharePoint, REST API for the HR platform). <strong>No AI in the calculations, by design:</strong> amounts, tax and personal data need determinism.</p>
+<h2>Design decisions</h2>
+<p>Parity before improvement; safe by default (dry run unless explicitly enabled, mandatory environment, one run per bot); per-item fault isolation, idempotent runs and masked failure alerts; least privilege with certificates and Key Vault; pinned images and deployed-commit traceability; k3s + Argo Workflows orchestration.</p>
+<h2>Results</h2>
+<p>USD 46,000 a year saved (the real license and external support cost under the contract) · 5 bots for 4 departments: 3 in production, 2 in testing · about 110-135 hours of manual work avoided per month (estimate) · 670 documents in 39 minutes with zero failures · 244/244 and 237/237 periods validated with zero differences · 2 legacy-process errors caught during treasury validation · registries of up to 1.6M records · 1,500+ automated tests.</p></div></article>
+</main>
+<footer class="site-footer"><div class="wrap">&copy; Jesús Mendoza · All rights reserved.</div></footer>
+</body>
+</html>

@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>An AI agent that monitors the market for four departments - Jesús Mendoza</title>
+<meta name="description" content="A Python agent that reads 29 sources and official gazettes every morning, assesses each item with an LLM and sends a tailored report to four departments.">
+<meta name="color-scheme" content="light dark">
+<link rel="canonical" href="https://jesusmendoza-dev.github.io/en/cases/agente-monitor/">
+<link rel="alternate" hreflang="es" href="https://jesusmendoza-dev.github.io/casos/agente-monitor/">
+<link rel="alternate" hreflang="en" href="https://jesusmendoza-dev.github.io/en/cases/agente-monitor/">
+<link rel="alternate" hreflang="x-default" href="https://jesusmendoza-dev.github.io/casos/agente-monitor/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Jesús Mendoza">
+<meta property="og:title" content="An AI agent that monitors the market for four departments - Jesús Mendoza">
+<meta property="og:description" content="A Python agent that reads 29 sources and official gazettes every morning, assesses each item with an LLM and sends a tailored report to four departments.">
+<meta property="og:url" content="https://jesusmendoza-dev.github.io/en/cases/agente-monitor/">
+<meta property="og:locale" content="en_US">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="/assets/style.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-header">
+<div class="wrap bar">
+<a class="brand" href="/en/">Jesús Mendoza</a>
+<nav aria-label="Main" class="nav"><a href="/en/#que-hago">What I do</a><a href="/en/#casos">Cases</a><a href="/en/#experiencia">Experience</a><a href="/en/#aptitudes">Skills</a><a href="/en/#formacion">Education</a><a href="/en/#contacto">Contact</a></nav>
+<a class="lang" href="/casos/agente-monitor/" hreflang="es" lang="es" aria-label="Español">ES</a>
+</div>
+</header>
+<main id="main">
+<article class="wrap case"><p class="back"><a href="/en/#casos">← Back to cases</a></p><h1>An AI agent that monitors the market for four departments</h1><p class="stack-label">Stack</p><ul class="chips"><li>Python</li><li>Claude (Anthropic API)</li><li>OpenRouter</li><li>Google Gemini</li><li>feedparser</li><li>BeautifulSoup</li><li>pdfplumber</li><li>SMTP Microsoft 365</li><li>Linux</li><li>systemd</li></ul><div class="prose"><h2>Context</h2>
+<p>At an energy-industry company, each manager searched 10+ sources by hand: media, industry sites and official gazettes in HTML and PDF.</p>
+<h2>Solution</h2>
+<p>A Python agent running daily at 7:00: it collects 29 RSS sources and official gazettes, removes duplicates, applies auditable keyword rules, asks an LLM to assess each item&#x27;s business impact as structured JSON, writes an executive summary and emails a tailored HTML report to each department.</p>
+<h2>Design decisions</h2>
+<p>Rules classify, AI analyzes; swappable LLM provider (Anthropic, OpenRouter, Gemini); per-source fault isolation and fallback when the LLM fails; preview mode by default, environment check and no-cost test mode; business context in the prompt; daily logs and per-run cost tracking.</p>
+<h2>Results</h2>
+<p>In daily production for 4 departments (42 recipients) · 20+ items analyzed per day · estimated AI cost ~USD 1.20/month · a 607-page gazette parsed in 15 s.</p></div></article>
+</main>
+<footer class="site-footer"><div class="wrap">&copy; Jesús Mendoza · All rights reserved.</div></footer>
+</body>
+</html>
