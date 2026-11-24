@@ -38,7 +38,7 @@
 <p>La interfaz web del ERP y de los portales se automatiza con Playwright. Los documentos se generan con python-docx y LibreOffice, y los archivos se leen y escriben en SharePoint vía Microsoft Graph.</p>
 <p><strong>Sin IA en los cálculos, por decisión:</strong> estos procesos manejan importes, datos fiscales y datos personales. Ahí se necesita determinismo.</p>
 <h2>Arquitectura</h2>
-<figure class="diagram"><pre class="mermaid">flowchart LR
+<figure class="diagram"><pre class="mermaid">flowchart TD
   CRON[Argo CronWorkflows · k3s] --&gt; POD[Contenedor del bot]
   SP[(SharePoint)] --&gt; POD
   POD --&gt;|Playwright| ERP[JD Edwards E1]

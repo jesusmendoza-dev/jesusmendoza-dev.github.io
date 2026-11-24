@@ -35,7 +35,7 @@
 <h2>Solution</h2>
 <p>I built five Python bots from scratch (Playwright for the ERP and tax-portal web UIs, python-docx/LibreOffice for documents, Microsoft Graph for SharePoint, REST API for the HR platform). <strong>No AI in the calculations, by design:</strong> amounts, tax and personal data need determinism.</p>
 <h2>Architecture</h2>
-<figure class="diagram"><pre class="mermaid">flowchart LR
+<figure class="diagram"><pre class="mermaid">flowchart TD
   CRON[Argo CronWorkflows · k3s] --&gt; POD[Bot container]
   SP[(SharePoint)] --&gt; POD
   POD --&gt;|Playwright| ERP[JD Edwards E1]
