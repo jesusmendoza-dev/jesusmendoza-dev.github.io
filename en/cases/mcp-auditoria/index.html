@@ -30,15 +30,30 @@
 </div>
 </header>
 <main id="main">
-<article class="wrap case"><p class="back"><a href="/en/#casos">← Back to cases</a></p><h1>Auditing an undocumented platform with a secure MCP server</h1><p class="stack-label">Stack</p><ul class="chips"><li>Python</li><li>FastMCP</li><li>SQL Server 2022</li><li>T-SQL</li><li>Windows Server</li><li>IIS</li><li>PowerShell</li><li>WinRM</li><li>Agentes de IA</li></ul><div class="prose"><h2>Context</h2>
+<article class="wrap case"><p class="back"><a href="/en/#casos">← Back to cases</a></p><h1>Auditing an undocumented platform with a secure MCP server</h1><p class="stack-label">Stack</p><ul class="chips"><li>Python</li><li>FastMCP</li><li>SQL Server 2022</li><li>T-SQL</li><li>Windows Server</li><li>IIS</li><li>PowerShell</li><li>WinRM</li><li>AI agents</li></ul><div class="prose"><h2>Context</h2>
 <p>The company depends on a third-party management platform (.NET on IIS and SQL Server) with no documentation and no source access. It had to be understood and audited without changing anything.</p>
 <h2>Solution</h2>
 <p>A Python MCP server (FastMCP) with 15 read-only tools an AI agent uses to survey servers, services, IIS sites, patches, firewall, permissions, groups, configuration and the full database structure. Core rule: <strong>the model sees structure, never sensitive values</strong>.</p>
+<h2>Architecture</h2>
+<figure class="diagram"><pre class="mermaid">flowchart TD
+  A[Analyst] --&gt; CC[AI agent · MCP client]
+  CC --&gt;|stdio| MCP[Audit MCP · Python FastMCP]
+  MCP --&gt; V[Parameter and path validation]
+  V --&gt;|WinRM| WEB[Web server · IIS]
+  V --&gt;|WinRM + fixed T-SQL| SQL[(SQL Server 2022)]
+  MCP -.-&gt; LOG[(Audit log)]
+  CC --&gt; H[Findings and documentation]</pre></figure>
 <h2>Design decisions</h2>
 <p>Fixed, startup-validated T-SQL over system views only; validated inputs and allow-listed paths; row limits, pagination, bounded concurrency and timeouts; server-side secret filtering with tests proving zero leakage; human confirmation for any remote command outside the MCP.</p>
 <h2>Results</h2>
 <p>4,662 tables / 148,213 columns / 12,808 foreign keys / ~22.8M rows mapped · 24 security findings documented · full schema surveyed in ~2 minutes · 848-test suite.</p></div></article>
 </main>
 <footer class="site-footer"><div class="wrap">&copy; Jesús Mendoza · All rights reserved.</div></footer>
+<script type="module">
+import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.4.1/dist/mermaid.esm.min.mjs";
+const dark = matchMedia("(prefers-color-scheme: dark)").matches;
+mermaid.initialize({ startOnLoad: false, theme: dark ? "dark" : "default", themeVariables: { fontSize: "16px" }, flowchart: { useMaxWidth: false, htmlLabels: true, nodeSpacing: 24, rankSpacing: 50 } });
+await mermaid.run({ querySelector: "pre.mermaid" });
+</script>
 </body>
 </html>

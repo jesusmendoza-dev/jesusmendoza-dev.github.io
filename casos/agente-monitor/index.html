@@ -36,7 +36,7 @@
 <p>Un agente en Python que corre todos los días a las 7:00. Recolecta las fuentes, filtra lo relevante, le pide a un LLM que evalúe cada noticia en función del negocio y envía un informe por mail distinto para cada área.</p>
 <ul><li><strong>Recolección:</strong> 29 fuentes RSS y boletines oficiales (HTML y PDF de cientos de páginas).</li><li><strong>Filtro determinístico:</strong> deduplicación por URL y por similitud de títulos, y reglas de palabras clave que asignan bloque y prioridad.</li><li><strong>Análisis con IA:</strong> por cada noticia el modelo devuelve JSON con relevancia, implicancia para el negocio, términos a resaltar y urgencia; además genera un resumen ejecutivo de hasta tres puntos.</li><li><strong>Entrega:</strong> HTML por perfil (Dirección, Comercial, Legales, Operaciones) enviado por SMTP de Microsoft 365.</li></ul>
 <h2>Arquitectura</h2>
-<figure class="diagram"><pre class="mermaid">flowchart LR
+<figure class="diagram"><pre class="mermaid">flowchart TD
   T[systemd timer 07:00] --&gt; M[Pipeline Python]
   RSS[29 fuentes RSS] --&gt; S[Scraper]
   BO[Boletines oficiales HTML/PDF] --&gt; S
@@ -57,7 +57,7 @@
 <script type="module">
 import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.4.1/dist/mermaid.esm.min.mjs";
 const dark = matchMedia("(prefers-color-scheme: dark)").matches;
-mermaid.initialize({ startOnLoad: false, theme: dark ? "dark" : "default" });
+mermaid.initialize({ startOnLoad: false, theme: dark ? "dark" : "default", themeVariables: { fontSize: "16px" }, flowchart: { useMaxWidth: false, htmlLabels: true, nodeSpacing: 24, rankSpacing: 50 } });
 await mermaid.run({ querySelector: "pre.mermaid" });
 </script>
 </body>

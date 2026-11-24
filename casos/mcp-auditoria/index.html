@@ -36,7 +36,7 @@
 <p>Un servidor MCP en Python (FastMCP) con 15 herramientas de solo lectura que un agente de IA usa para relevar servidores, servicios, sitios IIS, parches, firewall, permisos, grupos, configuración y la estructura completa de la base de datos.</p>
 <p>La regla central: <strong>el modelo ve estructura, nunca valores sensibles</strong>. Las cadenas de conexión se informan solo como &quot;presente&quot;, las variables de entorno por nombre, los archivos por metadatos y los logins sin hashes.</p>
 <h2>Arquitectura</h2>
-<figure class="diagram"><pre class="mermaid">flowchart LR
+<figure class="diagram"><pre class="mermaid">flowchart TD
   A[Analista] --&gt; CC[Agente de IA · cliente MCP]
   CC --&gt;|stdio| MCP[MCP de auditoría · Python FastMCP]
   MCP --&gt; V[Validación de parámetros y rutas]
@@ -53,7 +53,7 @@
 <script type="module">
 import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.4.1/dist/mermaid.esm.min.mjs";
 const dark = matchMedia("(prefers-color-scheme: dark)").matches;
-mermaid.initialize({ startOnLoad: false, theme: dark ? "dark" : "default" });
+mermaid.initialize({ startOnLoad: false, theme: dark ? "dark" : "default", themeVariables: { fontSize: "16px" }, flowchart: { useMaxWidth: false, htmlLabels: true, nodeSpacing: 24, rankSpacing: 50 } });
 await mermaid.run({ querySelector: "pre.mermaid" });
 </script>
 </body>

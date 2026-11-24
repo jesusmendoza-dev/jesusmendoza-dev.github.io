@@ -30,17 +30,34 @@
 </div>
 </header>
 <main id="main">
-<article class="wrap case"><p class="back"><a href="/en/#casos">← Back to cases</a></p><h1>Recovering a legacy ERP&#x27;s knowledge with MCP servers</h1><p class="stack-label">Stack</p><ul class="chips"><li>Python</li><li>MCP (official SDK)</li><li>python-oracledb</li><li>Oracle 19c</li><li>JD Edwards EnterpriseOne 9.2</li><li>JD Edwards AIS / Orchestrator</li><li>Agentes de IA</li></ul><div class="prose"><h2>Context</h2>
+<article class="wrap case"><p class="back"><a href="/en/#casos">← Back to cases</a></p><h1>Recovering a legacy ERP&#x27;s knowledge with MCP servers</h1><p class="stack-label">Stack</p><ul class="chips"><li>Python</li><li>MCP (official SDK)</li><li>python-oracledb</li><li>Oracle 19c</li><li>JD Edwards EnterpriseOne 9.2</li><li>JD Edwards AIS / Orchestrator</li><li>AI agents</li></ul><div class="prose"><h2>Context</h2>
 <p>An industrial services company runs on JD Edwards EnterpriseOne 9.2 over Oracle 19c. When the applications lead left, the system&#x27;s knowledge left with him: orchestrations, security, macros writing to production and scheduled jobs, all undocumented. Goal: know what depends on what, close risks and be able to operate.</p>
 <h2>Solution</h2>
 <p>I built two Python MCP servers that give an AI agent (MCP client) <strong>read-only</strong> access to the ERP:</p>
 <ul><li><strong>Database server</strong> (Oracle): <code>query</code> (SELECT/WITH only, row-limited), <code>describe_table</code>, and <code>udo_xml</code> (Orchestrator definitions with secrets redacted).</li><li><strong>AIS server</strong> (JD Edwards REST API): configuration, available orchestrations, scheduler status and row-limited table reads. Closed endpoint allow-list; it cannot run or stop anything.</li></ul>
 <p>The agent investigates and drafts; I validate, decide and send.</p>
+<h2>Architecture</h2>
+<figure class="diagram"><pre class="mermaid">flowchart TD
+  A[Analyst] --&gt; CC[AI agent · MCP client]
+  CC --&gt;|stdio| DB[Database MCP · Python]
+  CC --&gt;|stdio| AIS[AIS MCP · Python]
+  CC -.-&gt; SUB[Docs reader subagent]
+  DB --&gt;|SELECT in a transaction&lt;br/&gt;READ ONLY + ROLLBACK| ORA[(Oracle 19c · JD Edwards E1)]
+  AIS --&gt;|allowed endpoints| ORCH[JD Edwards AIS / Orchestrator]
+  DB -.-&gt; LOG[(Audit log)]
+  AIS -.-&gt; LOG
+  CC --&gt; DOC[Documentation,&lt;br/&gt;queries and&lt;br/&gt;deliverables]</pre></figure>
 <h2>Design decisions</h2>
 <p>Read-only in three layers (statement validation, READ ONLY transaction + rollback, dedicated account); row limits and timeouts; audit log without data; OS credential store and secret masking; human in the loop, no production writes.</p>
 <h2>Results</h2>
 <p>14/14 production orchestrations documented · 692 roles catalogued · 918 enabled users audited · 885 users with a role conflict found · 3,365 Excel/VBA files analyzed, 89 macros inventoried (20 write to production) · 13 reusable SQL checks · formal deliverables for Security · core discovery in three weeks.</p></div></article>
 </main>
 <footer class="site-footer"><div class="wrap">&copy; Jesús Mendoza · All rights reserved.</div></footer>
+<script type="module">
+import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.4.1/dist/mermaid.esm.min.mjs";
+const dark = matchMedia("(prefers-color-scheme: dark)").matches;
+mermaid.initialize({ startOnLoad: false, theme: dark ? "dark" : "default", themeVariables: { fontSize: "16px" }, flowchart: { useMaxWidth: false, htmlLabels: true, nodeSpacing: 24, rankSpacing: 50 } });
+await mermaid.run({ querySelector: "pre.mermaid" });
+</script>
 </body>
 </html>

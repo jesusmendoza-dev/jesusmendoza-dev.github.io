@@ -37,16 +37,16 @@
 <ul><li><strong>Servidor de base de datos</strong> (Oracle): <code>query</code> (solo <code>SELECT</code>/<code>WITH</code>, resultado tabular con límite de filas), <code>describe_table</code> (columnas y comentarios) y <code>udo_xml</code> (definiciones de orquestaciones, reglas, notificaciones y schedules del Orchestrator, con secretos ocultos).</li><li><strong>Servidor AIS</strong> (API REST de JD Edwards): configuración, orquestaciones disponibles, estado del programador y lectura de tablas con límite de filas. Lista cerrada de endpoints; no puede ejecutar ni detener nada.</li></ul>
 <p>El agente investiga y redacta; yo valido, decido y envío. Un subagente lector consulta la documentación ya generada para no repetir trabajo.</p>
 <h2>Arquitectura</h2>
-<figure class="diagram"><pre class="mermaid">flowchart LR
+<figure class="diagram"><pre class="mermaid">flowchart TD
   A[Analista] --&gt; CC[Agente de IA · cliente MCP]
   CC --&gt;|stdio| DB[MCP base de datos · Python]
   CC --&gt;|stdio| AIS[MCP AIS · Python]
   CC -.-&gt; SUB[Subagente lector de docs]
-  DB --&gt;|SELECT en transacción READ ONLY + ROLLBACK| ORA[(Oracle 19c · JD Edwards E1)]
+  DB --&gt;|SELECT en transacción&lt;br/&gt;READ ONLY + ROLLBACK| ORA[(Oracle 19c · JD Edwards E1)]
   AIS --&gt;|endpoints permitidos| ORCH[JD Edwards AIS / Orchestrator]
   DB -.-&gt; LOG[(Log de auditoría)]
   AIS -.-&gt; LOG
-  CC --&gt; DOC[Documentación, consultas reutilizables, entregables]</pre></figure>
+  CC --&gt; DOC[Documentación,&lt;br/&gt;consultas y&lt;br/&gt;entregables]</pre></figure>
 <h2>Decisiones de diseño</h2>
 <ul><li><strong>Solo lectura en tres capas:</strong> validación de la sentencia (una sola, solo lectura, sin <code>FOR UPDATE</code> ni paquetes peligrosos), transacción <code>READ ONLY</code> con <code>ROLLBACK</code> y cuenta dedicada para el agente.</li><li><strong>Límites:</strong> máximo de filas por consulta y timeout de 120 s.</li><li><strong>Auditoría:</strong> cada consulta queda registrada (sentencia, filas, duración) sin guardar los datos.</li><li><strong>Secretos:</strong> credenciales en el gestor de credenciales del sistema operativo; contraseñas y tokens se ocultan antes de llegar al modelo.</li><li><strong>Humano en el circuito:</strong> el agente nunca escribe en producción.</li></ul>
 <h2>Resultados</h2>
@@ -58,7 +58,7 @@
 <script type="module">
 import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.4.1/dist/mermaid.esm.min.mjs";
 const dark = matchMedia("(prefers-color-scheme: dark)").matches;
-mermaid.initialize({ startOnLoad: false, theme: dark ? "dark" : "default" });
+mermaid.initialize({ startOnLoad: false, theme: dark ? "dark" : "default", themeVariables: { fontSize: "16px" }, flowchart: { useMaxWidth: false, htmlLabels: true, nodeSpacing: 24, rankSpacing: 50 } });
 await mermaid.run({ querySelector: "pre.mermaid" });
 </script>
 </body>

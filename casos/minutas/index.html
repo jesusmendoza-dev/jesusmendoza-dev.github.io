@@ -36,7 +36,7 @@
 <p>Un flujo de Power Automate dirigido por eventos. Cuando una transcripción está lista, Microsoft Graph lo avisa; el flujo lee la transcripción VTT y los metadatos de la reunión, se la envía a la API de Anthropic (Claude Haiku) con un prompt que produce la estructura pedida, y entrega la minuta.</p>
 <ul><li><strong>Disparo:</strong> una suscripción de Microsoft Graph a nivel de todo el tenant notifica cuando una transcripción está disponible.</li><li><strong>Procesamiento:</strong> el flujo valida la notificación, filtra a los usuarios habilitados, descarta duplicados por identificador de transcripción y obtiene metadatos y VTT.</li><li><strong>Generación:</strong> un único prompt con la transcripción completa devuelve HTML con resumen ejecutivo, decisiones, tabla de tareas, próximos pasos y riesgos o bloqueos.</li><li><strong>Entrega:</strong> la minuta llega por mail al organizador y se archiva en PDF por usuario en SharePoint, con una lista de índice.</li><li><strong>Mantenimiento:</strong> la suscripción se renueva cada 12 h y un watchdog corre cada 6 h.</li></ul>
 <h2>Arquitectura</h2>
-<figure class="diagram"><pre class="mermaid">flowchart LR
+<figure class="diagram"><pre class="mermaid">flowchart TD
   T[Transcripción de Teams] --&gt; G[Suscripción de Microsoft Graph · webhook]
   G --&gt; F[Flujo de Power Automate]
   F --&gt; V[Validación · filtro de usuarios · dedup por transcripción]
@@ -58,7 +58,7 @@
 <script type="module">
 import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.4.1/dist/mermaid.esm.min.mjs";
 const dark = matchMedia("(prefers-color-scheme: dark)").matches;
-mermaid.initialize({ startOnLoad: false, theme: dark ? "dark" : "default" });
+mermaid.initialize({ startOnLoad: false, theme: dark ? "dark" : "default", themeVariables: { fontSize: "16px" }, flowchart: { useMaxWidth: false, htmlLabels: true, nodeSpacing: 24, rankSpacing: 50 } });
 await mermaid.run({ querySelector: "pre.mermaid" });
 </script>
 </body>

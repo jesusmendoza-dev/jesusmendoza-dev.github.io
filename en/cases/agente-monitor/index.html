@@ -34,11 +34,28 @@
 <p>At an energy-industry company, each manager searched 10+ sources by hand: media, industry sites and official gazettes in HTML and PDF.</p>
 <h2>Solution</h2>
 <p>A Python agent running daily at 7:00: it collects 29 RSS sources and official gazettes, removes duplicates, applies auditable keyword rules, asks an LLM to assess each item&#x27;s business impact as structured JSON, writes an executive summary and emails a tailored HTML report to each department.</p>
+<h2>Architecture</h2>
+<figure class="diagram"><pre class="mermaid">flowchart TD
+  T[systemd timer 07:00] --&gt; M[Python pipeline]
+  RSS[29 RSS sources] --&gt; S[Scraper]
+  BO[Official gazettes HTML/PDF] --&gt; S
+  S --&gt; F[Dedup + keyword rules]
+  F --&gt; A[LLM analysis · JSON]
+  A --&gt; LLM[(Claude · OpenRouter · Gemini)]
+  A --&gt; E[HTML report per area]
+  E --&gt; SMTP[(Microsoft 365)]
+  M -.-&gt; C[(Cost log per run)]</pre></figure>
 <h2>Design decisions</h2>
 <p>Rules classify, AI analyzes; swappable LLM provider (Anthropic, OpenRouter, Gemini); per-source fault isolation and fallback when the LLM fails; preview mode by default, environment check and no-cost test mode; business context in the prompt; daily logs and per-run cost tracking.</p>
 <h2>Results</h2>
 <p>In daily production for 4 departments (42 recipients) · 20+ items analyzed per day · estimated AI cost ~USD 1.20/month · a 607-page gazette parsed in 15 s.</p></div></article>
 </main>
 <footer class="site-footer"><div class="wrap">&copy; Jesús Mendoza · All rights reserved.</div></footer>
+<script type="module">
+import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.4.1/dist/mermaid.esm.min.mjs";
+const dark = matchMedia("(prefers-color-scheme: dark)").matches;
+mermaid.initialize({ startOnLoad: false, theme: dark ? "dark" : "default", themeVariables: { fontSize: "16px" }, flowchart: { useMaxWidth: false, htmlLabels: true, nodeSpacing: 24, rankSpacing: 50 } });
+await mermaid.run({ querySelector: "pre.mermaid" });
+</script>
 </body>
 </html>

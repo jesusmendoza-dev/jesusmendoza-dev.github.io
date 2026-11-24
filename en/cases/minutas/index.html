@@ -34,11 +34,29 @@
 <p>Teams meeting minutes were written by hand, and decisions and tasks went undocumented. The business asked for minutes in a defined structure: executive summary, decisions, tasks, next steps and risks.</p>
 <h2>Solution</h2>
 <p>An event-driven Power Automate flow. When a transcript is ready, Microsoft Graph notifies the flow, which reads the VTT transcript and the meeting metadata, sends them to the Anthropic API (Claude Haiku) with a prompt that produces the requested structure, emails the minute to the organizer and archives it as a per-user PDF in SharePoint with an index list. A tenant-wide Graph subscription is renewed every 12 h and a watchdog runs every 6 h.</p>
+<h2>Architecture</h2>
+<figure class="diagram"><pre class="mermaid">flowchart TD
+  T[Teams transcript] --&gt; G[Microsoft Graph subscription · webhook]
+  G --&gt; F[Power Automate flow]
+  F --&gt; V[Validation · user filter · dedup by transcript]
+  V --&gt; D[Metadata + VTT transcript]
+  D --&gt; AI[(Anthropic API · Claude Haiku)]
+  AI --&gt; H[Output cleanup · Outlook-safe HTML]
+  H --&gt; M[Email to the organizer]
+  H --&gt; P[Per-user PDF in SharePoint]
+  P --&gt; I[(Index list)]
+  W[12 h renewal · 6 h watchdog] -.-&gt; G</pre></figure>
 <h2>Design decisions</h2>
 <p>Event-driven instead of 3-minute polling; idempotency by transcript id; output hardening (code-fence stripping, Outlook-safe HTML); model chosen for cost and speed; built-in platform options rejected on cost (per-user licensing: US$840-1,764/month for 84 users at list prices); PowerShell scripts that patch the live flow definitions with dry-run, JSON backup and verification; shadow mode with reconciliation before cutover; old flows stopped, not deleted, as rollback.</p>
 <h2>Results</h2>
 <p>Pilot approved, in production since July 2026 for 84 users · estimated AI cost of about USD 0.04 per meeting, against the USD 840-1,764 per month that Teams Premium or Copilot licenses would cost for the same 84 users (cost avoided, not a realized saving) · polling replaced by an event-driven model · one throttling episode resolved itself with no duplicates · documented postmortem of a platform incident.</p></div></article>
 </main>
 <footer class="site-footer"><div class="wrap">&copy; Jesús Mendoza · All rights reserved.</div></footer>
+<script type="module">
+import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.4.1/dist/mermaid.esm.min.mjs";
+const dark = matchMedia("(prefers-color-scheme: dark)").matches;
+mermaid.initialize({ startOnLoad: false, theme: dark ? "dark" : "default", themeVariables: { fontSize: "16px" }, flowchart: { useMaxWidth: false, htmlLabels: true, nodeSpacing: 24, rankSpacing: 50 } });
+await mermaid.run({ querySelector: "pre.mermaid" });
+</script>
 </body>
 </html>
